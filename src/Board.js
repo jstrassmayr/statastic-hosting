@@ -17,8 +17,13 @@ class Board extends React.Component {
 
     
     commitAction() {
-        if (this.state.selectedPlayer && this.state.selectedAction) {        
-            this.state.actionList.push({player: this.state.selectedPlayer, action: this.state.selectedAction, team: this.state.selectedTeam})    ;
+        const {selectedAction, selectedTeam, selectedPlayer, actionList} = this.state;  // this is a nice shortening help when using state members
+        if (selectedPlayer && selectedAction) {        
+            actionList.push({player: selectedPlayer, action: selectedAction, team: selectedTeam});
+            if (selectedAction.name === "Score3" || selectedAction.name === "Score2" || selectedAction.name === "Score1") {
+                var scoreValue = selectedAction.name.charAt(5);
+                this.props.onScoreChange(selectedTeam, scoreValue);
+            }
             this.setState({
                 selectedAction: null,
                 selectedPlayer: null,
@@ -35,7 +40,7 @@ class Board extends React.Component {
             this.setState({selectedAction: action}, this.commitAction);                   
     }    
 
-    handlePlayerSelectionClick(player, team) {
+    handlePlayerSelectionClick(player, team) {        
         if (this.state.selectedPlayer?.id === player.id)    // the state is changes Async -> hand over a function to be called after it actually is updated. See https://stackoverflow.com/questions/30782948/why-calling-react-setstate-method-doesnt-mutate-the-state-immediately      
             this.setState({
                 selectedPlayer: null,
@@ -58,33 +63,18 @@ class Board extends React.Component {
         );
     }
 
-    renderPlayer(player, team) {
-        return (
-            <PlayerSelectionButton 
-                playerName={player.name} 
-                jerseyNr={player.jerseyNr}
-                onClick={() => this.handlePlayerSelectionClick(player, team)}
-            />
-        );
-    }
 
     renderPlayerRow(team) {
-        const playerRow = [];
-        team.players.forEach(player => {
-            playerRow.push(this.renderPlayer(player, team));
-        });
-
         return (
             <div>                
-                {playerRow}
-            </div>
-        );
-    }
-
-    renderAction(commitedAction) {
-        return (
-            <div>
-                {commitedAction.action.labelLong} by {commitedAction.player.name}
+                {team.players.map(player => (
+                    <PlayerSelectionButton 
+                        playerName={player.name} 
+                        jerseyNr={player.jerseyNr}
+                        selected={this.state.selectedPlayer?.id === player.id}
+                        onClick={() => this.handlePlayerSelectionClick(player, team)}
+                    />
+                ))}
             </div>
         );
     }
@@ -92,36 +82,23 @@ class Board extends React.Component {
     renderActionList() {
         const aList = [];
         this.state.actionList.forEach(commitedAction => {
-            aList.push(this.renderAction(commitedAction));
+            aList.push(
+                <div>
+                    - {commitedAction.action.labelLong} by {commitedAction.player.name}
+                </div>
+            );
         });
 
         return (
             <div>
+                <b>All events</b>
                 {aList}
             </div>
         );
     }
 
     render() {
-        const homeTeam = { teamId: 0, name: "Chicago bulls", mainColor: "white", overlayColor: "green",
-            players: [
-                {id: 0, name: "joey", jerseyNr: "23"},
-                {id: 1, name: "john", jerseyNr: "24"},
-                {id: 2, name: "carl", jerseyNr: "25"},
-                {id: 3, name: "mary", jerseyNr: "26"},
-                {id: 4, name: "matt", jerseyNr: "27"},
-            ]
-        };
-        const awayTeam = { teamId: 1, name: "LA Lakers", mainColor: "violet", overlayColor: "yellow",
-            players: [
-                {id: 10, name: "sepp", jerseyNr: "31"},
-                {id: 20, name: "hans", jerseyNr: "42"},
-                {id: 30, name: "karl", jerseyNr: "53"},
-                {id: 40, name: "mizi", jerseyNr: "64"},
-                {id: 50, name: "hias", jerseyNr: "75"},
-            ]
-        };
-
+        
         const actionScore3 = { id: 0, name: "Score3", labelShort: "+3", labelLong: "Score 3"};
         const actionAttempt3 = { id: 1, name: "Attempt3", labelShort: "~3", labelLong: "Attempt 3"};
         const actionScore2 = { id: 2, name: "Score2", labelShort: "+2", labelLong: "Score 2"};
@@ -145,7 +122,7 @@ class Board extends React.Component {
                 Selected Player: {this.state.selectedPlayer?.name} {this.state.selectedTeam?.name}<br/>
 
                 <div className="player-row">
-                    {this.renderPlayerRow(homeTeam)}
+                    {this.renderPlayerRow(this.props.teamHome)}
                 </div>
 
                 <div className="board-row">
@@ -165,7 +142,7 @@ class Board extends React.Component {
                 </div>
 
                 <div className="player-row">
-                    {this.renderPlayerRow(awayTeam)}
+                    {this.renderPlayerRow(this.props.teamAway)}
                 </div>
 
 

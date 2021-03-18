@@ -5,9 +5,12 @@ class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            scoreHome: 0,
-            scoreAway: 0,
-            teamHome: { id: 0, name: "Chicago bulls", mainColor: "white", overlayColor: "green",
+            gameDocId: this.props.gameDocId,
+            teamHome: { 
+                id: 0, 
+                name: "Chicago bulls", 
+                mainColor: "white", 
+                overlayColor: "green",
                 players: [
                     {id: 0, name: "joey", jerseyNr: "23"},
                     {id: 1, name: "john", jerseyNr: "24"},
@@ -16,7 +19,10 @@ class Game extends React.Component {
                     {id: 4, name: "matt", jerseyNr: "27"},
                 ]
             },
-            teamAway: { id: 1, name: "LA Lakers", mainColor: "violet", overlayColor: "yellow",
+            teamAway: { id: 1, 
+                name: "LA Lakers", 
+                mainColor: "violet", 
+                overlayColor: "yellow",
                 players: [
                     {id: 10, name: "sepp", jerseyNr: "31"},
                     {id: 20, name: "hans", jerseyNr: "42"},
@@ -24,10 +30,11 @@ class Game extends React.Component {
                     {id: 40, name: "mizi", jerseyNr: "64"},
                     {id: 50, name: "hias", jerseyNr: "77"},
                 ]
-            },            
+            },
+            scoreHome: 0,
+            scoreAway: 0,
             error: null,
             isLoaded: false,
-            gameDocId: "002apJMD8bkmV35tnIcV",// "rPZxppy4nZHHMEbyuX1N",
             homeTeamName: null,
             awayTeamName: null,
         };
@@ -58,7 +65,7 @@ class Game extends React.Component {
     
     
 
-    reloadGameData() {
+    reloadGameData() {        
         this.setState({ error: null, isLoaded: false });
         fetch("https://us-central1-statastic-c182d.cloudfunctions.net/getGameJson?docId="+this.state.gameDocId)
           .then(res => res.json())

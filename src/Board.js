@@ -1,5 +1,5 @@
 import React from 'react';
-import ActionRecordButton from './ActionRecordButton.js';
+import ActionButton from './ActionButton.js';
 import './index.css';
 import PlayerSelectionButton from './PlayerSelectionButton.js';
 
@@ -11,6 +11,7 @@ class Board extends React.Component {
             ,selectedTeam: null
             ,selectedPlayer: null
             ,actionList: []
+            ,gameDocId: this.props.gameDocId,
         };
     }
 
@@ -55,7 +56,7 @@ class Board extends React.Component {
 
     renderActionRecordButton(action) {
         return (
-            <ActionRecordButton 
+            <ActionButton 
                 label={action.labelShort}
                 selected={this.state.selectedAction?.id === action.id}
                 onClick={() => this.handleActionRecordButtonClick(action)}
@@ -81,12 +82,14 @@ class Board extends React.Component {
 
     renderActionList() {
         const aList = [];
+        var index = 0;
         this.state.actionList.forEach(commitedAction => {
             aList.push(
-                <div>
-                    - {commitedAction.action.labelLong} by {commitedAction.player.name}
-                </div>
+                <li key={index}>
+                    {commitedAction.action.labelLong} by {commitedAction.player.name}
+                </li>
             );
+            index++;
         });
 
         return (
@@ -147,8 +150,9 @@ class Board extends React.Component {
 
 
                 <div>
-                    {this.renderActionList()}
+                    {this.renderActionList()}                    
                 </div>
+
             </div>
         );
     }

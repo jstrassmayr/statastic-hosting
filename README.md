@@ -15,3 +15,6 @@ Create deployable files
 ## Firebase command help
 Deploy files to cloud
 > firebase deploy
+
+or
+> firebase deploy --only hosting

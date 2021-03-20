@@ -12,20 +12,9 @@ class TeamBoard extends React.Component {
     }    
 
     renderButton(player) {
-        return (
-            <button 
-                key={player.id}
-                className="playerSelectionButton"          
-                style={{backgroundColor: this.props.selectedPlayer?.id === player.id ? "#3663BF":"#FFF"}}
-                onClick={() => { this.handlePlayerButtonClick(player); }}>
-                {player.name} {player.jerseyNr}
-            </button>
-        );
-    }
-
-    renderButton2(player) {
         return (            
             <PlayerButton
+                key={player.id}
                 team={this.props.team}
                 player={player}
                 width="48" height="78" fontSize="20px"
@@ -39,7 +28,7 @@ class TeamBoard extends React.Component {
         return (
             <div style={{float: 'auto'}}>
                 {this.props.team.players.map(player => (
-                    this.renderButton2(player)
+                    this.renderButton(player)
                 ))}
             </div>            
         );

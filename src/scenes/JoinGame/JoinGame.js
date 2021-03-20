@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import './JoinList.css';
+import './JoinGame.css';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import * as FirestoreService from '../../services/firestore';
 
-function JoinList(props) {
+function JoinGame(props) {
 
     const { users, gameDocId, onSelectUser, onCloseGame, userId } = props;
 
@@ -46,14 +46,16 @@ function JoinList(props) {
     return (
         <div>
             <header>
-                <h1>Welcome to the JoinList.js!</h1>
-            </header>
+                <h1>Hello new user!</h1>
+                Do you want to join this game to help recording?
+            </header>            
             <div className="join-container">
+                
                 <div>
                     <form name="addUserToListForm">
-                        <p>Select your name if you previously joined the list...</p>
+                        <p>Select your name if you previously contributed to this game...</p>
                         {getUserButtonList()}
-                        <p>...or enter your name to join the list...</p>
+                        <p>...or enter your name to join</p>
                         <p>
                             <input type="text" name="name" />
                             <button onClick={addNewUser}>Join</button>
@@ -67,4 +69,4 @@ function JoinList(props) {
     );
 }
 
-export default JoinList;
+export default JoinGame;

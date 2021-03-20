@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import './AddItem.css';
+import './AddAction.css';
 import * as FirestoreService from '../../../services/firestore';
 import ActionBoard from '../../../ActionBoard';
 import TeamBoard from '../../../TeamBoard';
 
-function AddItem(props) {
-
+function AddAction(props) {
+ 
     const { gameDocId, userId, teamHome, teamAway, onScoreChange } = props;
     const [selectedAction, setSelectedAction] = useState();
     const [selectedPlayer, setSelectedPlayer] = useState();
     const [selectedTeam, setSelectedTeam] = useState();
     
-    const saveAction = React.useCallback((actionLabelLong) => { 
-        FirestoreService.addGameAction(actionLabelLong, gameDocId, userId)            
-            .catch(reason => { alert(reason); });
+    const saveAction = React.useCallback((action, player) => {           
+        FirestoreService.addGameAction(gameDocId, action, player, userId)            
+            .catch(reason => { alert(reason); });        
       }, [gameDocId, userId]);
 
     useEffect(() => {
@@ -22,7 +22,7 @@ function AddItem(props) {
                 var scoreValue = selectedAction.name.charAt(5);
                 onScoreChange(selectedTeam, scoreValue);
             }
-            saveAction(selectedAction.name + " by " + selectedPlayer.name);
+            saveAction(selectedAction, selectedPlayer);
             setSelectedAction(null);
             setSelectedPlayer(null);
             setSelectedTeam(null);
@@ -46,4 +46,4 @@ function AddItem(props) {
     );
 }
 
-export default AddItem;
+export default AddAction;

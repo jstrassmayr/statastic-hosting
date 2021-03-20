@@ -22,8 +22,7 @@ function ItemList(props) {
         return unsubscribe;
     }, [gameDocId, setActions]);
 
-    const actionElements = actions
-        .map((action, i) => <div key={i}>{action.name}</div>);
+    const actionElements = actions.map((action, i) => <li key={i}>{action.name} by {action.playerName}</li>);
 
     return (
         <div>

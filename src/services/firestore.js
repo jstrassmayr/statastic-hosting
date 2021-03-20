@@ -43,12 +43,19 @@ export const getGame = gameDocId => {
         .get();
 };
 
-export const getGameActions = gameDocId => {
+
+export const streamGame = (gameDocId, observer) => {
     return db.collection(gameCollectionName)
         .doc(gameDocId)
-        .collection(actionCollectionName)
-        .get();
-}
+        .onSnapshot(observer);
+};
+
+// export const getGameActions = gameDocId => {
+//     return db.collection(gameCollectionName)
+//         .doc(gameDocId)
+//         .collection(actionCollectionName)
+//         .get();
+// }
 
 export const streamGameActions = (gameDocId, observer) => {
     return db.collection(gameCollectionName)
@@ -69,28 +76,24 @@ export const addUserToGame = (userName, gameDocId, userId) => {
         });
 };
 
-export const addGameAction = (item, gameDocId, userId) => {
-    // return getGroceryListItems(gameDocId)
-    //     .then(querySnapshot => querySnapshot.docs)
-    //     .then(groceryListItems => groceryListItems.find(groceryListItem => groceryListItem.data().name.toLowerCase() === item.toLowerCase()))
-    //     .then(matchingItem => {
-    //         if (!matchingItem) {
-    //             return db.collection(gameCollectionName)
-    //                 .doc(gameDocId)
-    //                 .collection('items')
-    //                 .add({
-    //                     name: item,
-    //                     created: firebase.firestore.FieldValue.serverTimestamp(),
-    //                     createdBy: userId
-    //                 });
-    //         }
-    //         throw new Error('duplicate-item-error');
-    //     });
+export const updateGameScore = (gameDocId, scoreHome, scoreAway) => {
+    return db.collection(gameCollectionName)
+        .doc(gameDocId)
+        .update({
+            scoreHome: scoreHome,
+            scoreAway: scoreAway
+        });
+};
+
+
+export const addGameAction = (gameDocId, action, player, userId) => {
     return db.collection(gameCollectionName)
         .doc(gameDocId)
         .collection(actionCollectionName)
         .add({
-            name: item,
+            name: action.name,
+            labelLong: action.labelLong,
+            playerName: player.name,
             created: firebase.firestore.FieldValue.serverTimestamp(),
             createdBy: userId
         });

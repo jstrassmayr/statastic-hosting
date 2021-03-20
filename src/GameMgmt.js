@@ -3,12 +3,12 @@ import React, { useState, useEffect } from 'react';
 import * as FirestoreService from './services/firestore';
 
 import useQueryString from './hooks/useQueryString'
-import EditList from './scenes/EditList/EditList';
+import EditGame from './scenes/EditGame/EditGame';
 import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import CreateGame from './scenes/CreateGame/CreateGame';
-import JoinList from './scenes/JoinList/JoinList';
+import JoinGame from './scenes/JoinGame/JoinGame';
 
-function GameNew() {
+function GameMgmt() {
         
     const [user, setUser] = useState();
     const [userId, setUserId] = useState();
@@ -24,16 +24,32 @@ function GameNew() {
         FirestoreService.authenticateAnonymously().then(userCredential => {
         setUserId(userCredential.user.uid);
         if (gameDocId) {
-            FirestoreService.getGame(gameDocId).then(game => {
-                if (game.exists) {
-                    setError(null);
-                    setGame(game.data());
-                } else {
-                    setError('game-not-found');
-                    setGameDocId();
-                }
-            })
-            .catch(() => setError('game-get-fail'));
+            if (false) {
+                FirestoreService.getGame(gameDocId).then(game => {
+                    if (game.exists) {
+                        setError(null);
+                        setGame(game.data());
+                    } else {
+                        setError('game-not-found');
+                        setGameDocId();
+                    }
+                })
+                .catch(() => setError('game-get-fail'));
+            }
+            else {
+                const unsubscribe = FirestoreService.streamGame(gameDocId, {
+                    next: game => {
+                        // alert(game.data().scoreHome);
+                        setError(null);
+                        setGame(game.data());
+                    },
+                    error: () => {                        
+                        setError('game-not-found');
+                        setGameDocId();
+                    }
+                });
+                return unsubscribe;
+            }
         }
         })
         .catch(() => setError('anonymous-auth-failed'));
@@ -58,13 +74,17 @@ function GameNew() {
       }
     
     // render a scene based on the current state
-    if (game && user) {
-        return <EditList {...{ gameDocId, user, onCloseGame, userId}}></EditList>;
+    if (game && user) {        
+        return (
+            <div>
+                {game.scoreHome} {game.scoreAway}
+                <EditGame {...{ game, gameDocId, user, onCloseGame, userId}}></EditGame>;
+            </div>);
     } else if(game) {
         return (
-        <div>
+        <div>            
             <ErrorMessage errorCode={error}></ErrorMessage>
-            <JoinList users={game.users} {...{gameDocId, onSelectUser, onCloseGame, userId}}></JoinList>
+            <JoinGame users={game.users} {...{gameDocId, onSelectUser, onCloseGame, userId}}></JoinGame>
         </div>
         );
     }
@@ -77,4 +97,4 @@ function GameNew() {
 }
 
 
-export default GameNew;
+export default GameMgmt;

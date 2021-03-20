@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import './EditList.css';
-import AddItem from './AddItem/AddItem';
-import ItemList from './ItemList/ItemList';
+import React, { useState, useEffect } from 'react';
+import './EditGame.css';
+import AddAction from './AddAction/AddAction';
+import ActionList from './ActionList/ActionList';
+import * as FirestoreService from '../../services/firestore';
 
-function EditList(props) {
+function EditGame(props) {
 
     const { gameDocId, user, onCloseGame, userId } = props;
     const [teamHome, setTeamHome] = useState({ 
         id: 0, 
-        name: "Chicago bulls", 
+        name: "Chicago bulls",
         mainColor: "white", 
         overlayColor: "green",
         players: [
@@ -35,6 +36,11 @@ function EditList(props) {
     const [scoreHome, setScoreHome] = useState(0);
     const [scoreAway, setScoreAway] = useState(0);
 
+    useEffect(() => {
+        FirestoreService.updateGameScore(gameDocId, scoreHome, scoreAway);        
+    }, [gameDocId, scoreHome, scoreAway]);
+
+
     function onCreateListClick(e) {
         e.preventDefault();
         onCloseGame();
@@ -44,7 +50,7 @@ function EditList(props) {
         if (team.id === teamHome.id)
             setScoreHome(parseInt(scoreHome)+parseInt(scoreValue));
         else
-            setScoreAway(parseInt(scoreAway)+parseInt(scoreValue));
+            setScoreAway(parseInt(scoreAway)+parseInt(scoreValue));        
     }
 
     return (
@@ -52,25 +58,22 @@ function EditList(props) {
             <header className="app-header">
                 <h1>Live Game</h1>
                 <p><strong>Hi {user}!</strong></p>
-                <p>Add items to the list. When someone else adds an item it will instantly appear on the list.</p>
+                <p>Add actions to the game. When someone else adds an action it will instantly appear on the list.</p>
                 Score: {scoreHome} : {scoreAway}
             </header>
             <div className="edit-container">                
                 <div className="add-item-column">
-                    <AddItem {...{gameDocId, userId, teamHome, teamAway}} onScoreChange={(team, scoreValue) => handleScoreChange(team, scoreValue)}></AddItem>
-                </div>
-                <div>
-                    
+                    <AddAction {...{gameDocId, userId, teamHome, teamAway}} onScoreChange={(team, scoreValue) => handleScoreChange(team, scoreValue)}></AddAction>
                 </div>
                 <div className="list-column">
-                    <ItemList {...{gameDocId}}></ItemList>
+                    <ActionList {...{gameDocId}}></ActionList>
                 </div>
             </div>
             <footer className="app-footer">
-                <p>Share your gamesss with others using <a href={`/?gameDocId=${gameDocId}`} target="_blank" rel="noopener noreferrer">this link</a> or <a href="/" onClick={onCreateListClick}>create a new grocery list</a>.</p>
+                <p>Share your games with others using <a href={`/?gameDocId=${gameDocId}`} target="_blank" rel="noopener noreferrer">this link</a> or <a href="/" onClick={onCreateListClick}>create a new game</a>.</p>
             </footer>    
         </div>
     );
 }
 
-export default EditList;
+export default EditGame;

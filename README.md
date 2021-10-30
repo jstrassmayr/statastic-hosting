@@ -2,8 +2,9 @@
 
 This is a Firebase Hosting project for 
 
-- Storing images Statastic Live-Tracking (see the folder/repo "statastic-functions") and
-- Statastic-Web React application
+- Storing images for Statastic Live-Tracking (see the folder/repo "statastic-functions") and
+- privacy policy (html file) for Google Play Developer Console
+- Statastic-Web React application (under development)
 
 ## React help
 
@@ -13,9 +14,13 @@ Start application locally
 Create deployable files
 > yarn build
 
-## Firebase command help
+## Deploy 
 
-Deploy files to cloud
+1) Login with statastic.basketball@gmail.com
+
+2) Create deployable files (see above)
+
+3) Deploy files to cloud
 > firebase deploy
 
 or

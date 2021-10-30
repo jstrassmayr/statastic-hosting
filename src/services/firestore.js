@@ -1,16 +1,18 @@
+import dotenv from 'dotenv'
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
 
+dotenv.config();
 const firebaseConfig = {
-    apiKey: "AIzaSyBd8cyVgr-x73ElngxK_dMeeAz1TjpiVqI",
-    authDomain: "statastic-c182d.firebaseapp.com",
-    databaseURL: "https://statastic-c182d.firebaseio.com",
-    projectId: "statastic-c182d",
-    storageBucket: "statastic-c182d.appspot.com",
-    messagingSenderId: "849867232741",
-    appId: "1:849867232741:web:81e2e7c38654aaa1664b0c",
-    measurementId: "G-RLE0HXEXHJ"
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    databaseURL: process.env.REACT_APP_DATABASE_URL,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID,
+    measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
 
 if (!firebase.apps.length) 
@@ -21,9 +23,18 @@ const gameCollectionName = 'gameHHH';
 const actionCollectionName = 'actionHHH';
 
 
+export const auth = firebase.auth();
 export const authenticateAnonymously = () => {
-    return firebase.auth().signInAnonymously();
+    return auth.signInAnonymously();
 };
+
+const googleProvider = new firebase.auth.GoogleAuthProvider()
+export const signInWithGoogle = () => {
+    return auth.signInWithPopup(googleProvider);
+}
+
+
+
 
 export const createGame = (userName, userId) => {
     return db.collection(gameCollectionName)
@@ -50,12 +61,18 @@ export const streamGame = (gameDocId, observer) => {
         .onSnapshot(observer);
 };
 
-// export const getGameActions = gameDocId => {
-//     return db.collection(gameCollectionName)
-//         .doc(gameDocId)
-//         .collection(actionCollectionName)
-//         .get();
-// }
+
+
+export const streamGames = (userId, observer) => {
+    if (userId) {
+        return db.collection(gameCollectionName)
+            .where("createdBy", "==", userId)
+            //.orderBy('created')       // i cannot do WHERE and ORDERBY without previously creating an index in firestore. See https://github.com/EddyVerbruggen/nativescript-plugin-firebase/issues/602#issuecomment-497663035
+            .onSnapshot(observer);
+    }
+    return null;
+};
+
 
 export const streamGameActions = (gameDocId, observer) => {
     return db.collection(gameCollectionName)
